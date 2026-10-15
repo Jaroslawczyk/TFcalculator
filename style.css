@@ -1,0 +1,27 @@
+:root{--bg:#f4f6f8;--fg:#1c2530;--card:#fff;--bd:#d5dbe2;--ac:#2563eb;--good:#15803d;--bad:#b91c1c;--mut:#667085}
+@media(prefers-color-scheme:dark){:root{--bg:#12161c;--fg:#e6e9ee;--card:#1b222b;--bd:#2c3642;--ac:#60a5fa;--good:#4ade80;--bad:#f87171;--mut:#98a2b3}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+header,main,footer,nav{max-width:1000px;margin:0 auto;padding:0 16px}
+header h1{font-size:1.5rem;margin:16px 0 4px}header p{margin:0 0 12px;color:var(--mut)}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+nav button,.calib button{background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
+nav button.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--mut)}
+input,select{font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);width:100%}
+label.chk{flex-direction:row;align-items:center}label.chk input{width:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:flex;flex-direction:column}
+.card span{font-size:.8rem;color:var(--mut)}.card b{font-size:1.25rem}.card small{color:var(--mut)}
+.card.big b{font-size:2rem;color:var(--ac)}.card.good b{color:var(--good)}.card.bad b{color:var(--bad)}
+.advice{background:var(--card);border-left:4px solid var(--ac);padding:10px 12px;border-radius:6px}
+.warn{color:var(--bad);margin:6px 0}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--card)}
+th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+tr.best td{background:rgba(34,197,94,.18);font-weight:600}
+.muted{color:var(--mut);font-size:.9rem}
+section h2{margin-top:0}section ul{padding-left:20px}section li{margin:4px 0}
+code{background:var(--card);padding:2px 5px;border-radius:4px;word-break:break-word}
+.calib{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.calib p{flex-basis:100%;margin:0}.calib input{max-width:220px}
+footer{color:var(--mut);font-size:.8rem;padding:20px 16px}
