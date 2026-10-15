@@ -83,6 +83,22 @@ function fillModes() {
 $("cargo").onchange = () => { fillModes(); run(); };
 fillModes();
 
+// сложность: игра не публикует точные множители — значения примерные, уточняются калибровкой
+const DIFFS = [["1", "Лёгкая (×1.00)"], ["0.85", "Средняя (×0.85)"], ["0.7", "Сложная (×0.70)"], ["0.55", "Очень сложная (×0.55)"]];
+function syncDiff() {
+  const hit = DIFFS.find(([v]) => +v === S.difficulty);
+  $("diff").innerHTML = DIFFS.map(([v, n]) => `<option value="${v}">${n}</option>`).join("") +
+    (hit ? "" : `<option value="custom">Своя (×${S.difficulty})</option>`);
+  $("diff").value = hit ? hit[0] : "custom";
+}
+$("diff").onchange = () => {
+  if ($("diff").value === "custom") return;
+  S.difficulty = +$("diff").value; saveSettings();
+  if ($("s_difficulty")) $("s_difficulty").value = S.difficulty;
+  syncDiff(); run();
+};
+syncDiff();
+
 // ползунок + число
 function bind(rng, num, out, suffix) {
   const upd = v => { out.textContent = Math.round(v * 10) / 10 + " " + suffix; };
@@ -200,15 +216,15 @@ function renderCompare(cargo, p) {
 
 // настройки
 const SET_FIELDS = [
-  ["cal", "Калибровка цены (×)"], ["difficulty", "Множитель сложности"], ["refSpeed", "Опорная скорость, км/ч"],
+  ["cal", "Калибровка цены (×)"], ["difficulty", "Множитель сложности (свой)"], ["refSpeed", "Опорная скорость, км/ч"],
   ["speedExp", "Степень влияния скорости"], ["uptime", "Доля времени в работе (0–1)"],
   ["loadFactor", "Средняя загрузка (0–1)"], ["upkeepRate", "Обслуживание/год от цены ТС"],
   ["perKmCost", "Эксплуатация: доля цены за км"]
 ];
 $("settingsForm").innerHTML = SET_FIELDS.map(([k, l]) =>
   `<label class="fld">${l}<input type="number" inputmode="decimal" step="any" id="s_${k}" value="${S[k]}"></label>`).join("");
-SET_FIELDS.forEach(([k]) => $("s_" + k).oninput = e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { S[k] = v; saveSettings(); run(); } });
-$("resetSettings").onclick = () => { S = Object.assign({}, DEFAULT_SETTINGS); saveSettings(); SET_FIELDS.forEach(([k]) => $("s_" + k).value = S[k]); run(); };
+SET_FIELDS.forEach(([k]) => $("s_" + k).oninput = e => { const v = parseFloat(e.target.value); if (!isNaN(v)) { S[k] = v; saveSettings(); if (k === "difficulty") syncDiff(); run(); } });
+$("resetSettings").onclick = () => { S = Object.assign({}, DEFAULT_SETTINGS); saveSettings(); SET_FIELDS.forEach(([k]) => $("s_" + k).value = S[k]); syncDiff(); run(); };
 $("calibrate").onclick = () => {
   const obs = parseFloat($("obsPrice").value);
   if (!(obs > 0)) return;
