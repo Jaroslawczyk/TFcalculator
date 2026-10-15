@@ -57,7 +57,8 @@ input[type=range]{padding:0;min-height:32px;border:0;background:transparent;acce
 .seg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .seg button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px 8px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);color:var(--mut);font:700 .66rem Manrope,sans-serif;cursor:pointer;min-height:58px;transition:.15s}
 .seg button.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.seg button:disabled{opacity:.35;cursor:not-allowed}
+.seg button.na{opacity:.45;border-style:dashed}
+.modehint{font-size:.72rem;font-weight:500;color:var(--mut)}.modehint:empty{display:none}
 
 /* results */
 .hero{background:linear-gradient(135deg,var(--brand),color-mix(in srgb,var(--brand) 55%,#000));color:var(--brand-ink);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 1fr;gap:16px}

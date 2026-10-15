@@ -40,8 +40,15 @@ function fillModes() {
   const avail = Object.keys(MODES).filter(m => VEHICLES.some(v => v.mode === m && v.kind === kind));
   if (!avail.includes(mode)) mode = avail[0];
   $("modeSeg").innerHTML = Object.keys(MODES).map(m =>
-    `<button type="button" data-m="${m}" class="${m === mode ? "on" : ""}" ${avail.includes(m) ? "" : "disabled"}>${icon(m)}<span>${MODES[m].name.split(" ")[0]}</span></button>`).join("");
-  $("modeSeg").querySelectorAll("button").forEach(b => b.onclick = () => { mode = b.dataset.m; fillModes(); run(); });
+    `<button type="button" data-m="${m}" class="${m === mode ? "on" : ""} ${avail.includes(m) ? "" : "na"}" title="${avail.includes(m) ? "" : "Только пассажиры — нажмите, чтобы переключить"}">${icon(m)}<span>${MODES[m].name.split(" ")[0]}</span></button>`).join("");
+  $("modeSeg").querySelectorAll("button").forEach(b => b.onclick = () => {
+    mode = b.dataset.m;
+    if (!VEHICLES.some(v => v.mode === mode && v.kind === curCargo().kind))
+      $("cargo").value = CARGO.find(c => VEHICLES.some(v => v.mode === mode && v.kind === c.kind)).id;
+    fillModes(); run();
+  });
+  const na = Object.keys(MODES).filter(m => !avail.includes(m)).map(m => MODES[m].name.split(" ")[0]);
+  $("modeHint").textContent = na.length ? `${na.join(", ")} — только для пассажиров (в игре без модов). Нажмите, чтобы переключить груз.` : "";
   $("vehicle").innerHTML = VEHICLES.filter(v => v.mode === mode && v.kind === kind)
     .map(v => `<option value="${v.id}">${v.name}</option>`).join("");
 }
