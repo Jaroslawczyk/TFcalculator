@@ -13,6 +13,34 @@ $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => {
   window.scrollTo({ top: 0 });
 });
 
+// темы оформления (сохраняются в localStorage)
+const THEMES = [
+  ["auto", "Как в системе", "#f2eee6", "#151d1a", "#3fcf9b"],
+  ["light", "Бумага", "#f2eee6", "#fffdf8", "#1f6f54"],
+  ["dark", "Графит", "#0d1311", "#151d1a", "#3fcf9b"],
+  ["metro", "Метро", "#eef2f7", "#ffffff", "#1d4ed8"],
+  ["desert", "Пустыня", "#f6ece0", "#fffaf3", "#c2410c"],
+  ["depot", "Депо", "#15110c", "#1e1912", "#e8a33d"],
+  ["night", "Ночной экспресс", "#0f0d1a", "#18152a", "#a78bfa"],
+  ["contrast", "Контраст", "#000000", "#0b0b0b", "#ffd400"]
+];
+let theme = "auto";
+try { theme = localStorage.getItem("tpf2theme") || "auto"; } catch (e) {}
+function applyTheme(t) {
+  theme = t;
+  if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
+  try { localStorage.setItem("tpf2theme", t); } catch (e) {}
+  document.querySelectorAll("[data-themes]").forEach(box => box.innerHTML = THEMES.map(([id, nm, a, b, c]) =>
+    `<button type="button" class="th ${id === theme ? "on" : ""}" data-t="${id}"><span class="sw"><i style="background:${a}"></i><i style="background:${c}"></i></span>${nm}</button>`).join(""));
+  document.querySelectorAll(".th").forEach(b => b.onclick = () => applyTheme(b.dataset.t));
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue("--brand").trim();
+  if (typeof run === "function" && $("vehicle").value) run();
+}
+$("themeBtn").onclick = e => { e.stopPropagation(); const p = $("themePop"); p.hidden = !p.hidden; $("themeBtn").setAttribute("aria-expanded", !p.hidden); };
+document.addEventListener("click", e => { if (!$("themePop").contains(e.target) && !e.target.closest(".th")) $("themePop").hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("themePop").hidden = true; });
+
 // лайфхаки
 const TIPS = [
   ["Старт на коротких линиях", "Грузовики между шахтой и заводом на 5–15 км. Корабли — часто лёгкий ранний профит при большом объёме."],
@@ -81,20 +109,48 @@ function paybackInfo(y) {
   return ["Очень долго", "bad"];
 }
 
-function chart(r) {
-  const W = 300, H = 120, pl = 8, pr = 8, pt = 10, pb = 18;
-  const years = Math.min(20, Math.max(5, isFinite(r.payback) ? Math.ceil(r.payback * 1.8) : 10));
-  const y0 = -r.capex, y1 = r.profit * years - r.capex;
-  const lo = Math.min(y0, y1, 0), hi = Math.max(y0, y1, 0), span = (hi - lo) || 1;
-  const X = t => pl + (W - pl - pr) * t / years, Y = v => pt + (H - pt - pb) * (1 - (v - lo) / span);
-  const zero = Y(0), end = Y(y1), start = Y(y0);
-  let be = "";
-  if (isFinite(r.payback) && r.payback <= years) be = `<circle cx="${X(r.payback)}" cy="${zero}" r="4.5" fill="var(--amber)"/><text x="${Math.min(X(r.payback), W - 40)}" y="${zero - 8}">${r.payback.toFixed(1)} г.</text>`;
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:auto;aspect-ratio:${W}/${H}">
-    <line x1="${pl}" x2="${W - pr}" y1="${zero}" y2="${zero}" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="3 3"/>
-    <path d="M${X(0)} ${start} L${X(years)} ${end}" stroke="${r.profit > 0 ? "var(--good)" : "var(--bad)"}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    ${be}<text x="${pl}" y="${H - 4}">0</text><text x="${W - pr - 28}" y="${H - 4}">${years} лет</text></svg>`;
+const short = n => {
+  const a = Math.abs(n), s = n < 0 ? "−" : "";
+  if (a >= 1e6) return s + "$" + +(a / 1e6).toFixed(1) + "M";
+  if (a >= 1e3) return s + "$" + Math.round(a / 1e3) + "k";
+  return s + "$" + Math.round(a);
+};
+function niceStep(x) {
+  const p = Math.pow(10, Math.floor(Math.log10(x || 1))), f = x / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
 }
+
+// Столбцы: баланс проекта (всё заработанное минус вложения) на конец каждого года.
+function chart(r) {
+  const W = Math.max(280, ($("result").clientWidth || 600) - 38), H = W < 420 ? 220 : 260;
+  const pl = 52, pr = 10, pt = 26, pb = 26, pw = W - pl - pr, ph = H - pt - pb;
+  const N = Math.min(15, Math.max(5, isFinite(r.payback) ? Math.ceil(r.payback * 2) : 8));
+  const vals = Array.from({ length: N + 1 }, (_, i) => r.profit * i - r.capex);
+  const step = niceStep((Math.max(0, ...vals) - Math.min(0, ...vals)) / 4);
+  const lo = Math.floor(Math.min(0, ...vals) / step) * step, hi = Math.ceil(Math.max(0, ...vals) / step) * step || step;
+  const Y = v => pt + ph * (1 - (v - lo) / (hi - lo)), slot = pw / (N + 1), bw = Math.min(34, slot * 0.62);
+  const cx = i => pl + slot * (i + 0.5);
+  let g = "";
+  for (let v = lo; v <= hi + step / 2; v += step)
+    g += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" class="${v === 0 ? "zero" : "grid"}"/><text x="${pl - 8}" y="${Y(v) + 4}" text-anchor="end">${short(v)}</text>`;
+  const every = N > 10 && W < 500 ? 2 : 1;
+  vals.forEach((v, i) => {
+    const y = Math.min(Y(v), Y(0)), h = Math.max(1.5, Math.abs(Y(v) - Y(0)));
+    g += `<rect x="${cx(i) - bw / 2}" y="${y}" width="${bw}" height="${h}" rx="4" fill="var(${v < 0 ? "--bad" : "--good"})"><title>${i ? i + "-й год" : "Старт"}: ${money(v)}</title></rect>`;
+    if (i % every === 0) g += `<text x="${cx(i)}" y="${H - 8}" text-anchor="middle">${i ? i : "старт"}</text>`;
+  });
+  if (isFinite(r.payback) && r.payback <= N) {
+    const x = cx(0) + r.payback * slot, lbl = `окупится за ${r.payback.toFixed(1)} г.`, tw = lbl.length * 6.4 + 16;
+    const lx = Math.min(Math.max(x - tw / 2, pl), W - pr - tw);
+    g += `<line x1="${x}" x2="${x}" y1="${pt - 4}" y2="${pt + ph}" class="be"/><rect x="${lx}" y="2" width="${tw}" height="20" rx="10" fill="var(--amber)"/><text x="${lx + tw / 2}" y="16" text-anchor="middle" class="bel">${lbl}</text>`;
+  }
+  return `<p class="chartnote">Вложено <b>${money(r.capex)}</b> на старте. ${r.profit > 0
+      ? `Через ${N} лет на счёте проекта будет <b class="pos">${money(vals[N])}</b>.`
+      : `Линия убыточна: каждый год минус <b class="neg">${money(-r.profit)}</b>.`}</p>
+    <svg class="chart" width="${W}" height="${H}" style="width:${W}px;height:${H}px" viewBox="0 0 ${W} ${H}">${g}</svg>
+    <div class="legend"><span><i class="dot" style="background:var(--bad)"></i>ещё не окупилось</span><span><i class="dot" style="background:var(--good)"></i>в плюсе</span><span>по оси X — годы работы</span></div>`;
+}
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(run, 150); });
 
 function run() {
   const cargo = curCargo(), veh = VEHICLES.find(v => v.id === $("vehicle").value);
@@ -119,7 +175,7 @@ function run() {
     </div>
     <div class="card"><h3>Выручка и расходы</h3>
       <div class="split"><i class="a" style="width:${costPct}%"></i><i class="b" style="width:${100 - costPct}%"></i></div>
-      <div class="legend"><span><i class="dot" style="background:var(--bad)"></i>Расходы <b>${costPct.toFixed(0)}%</b></span><span><i class="dot" style="background:var(--good)"></i>Остаётся <b>${(100 - costPct).toFixed(0)}%</b></span></div></div>
+      <div class="legend"><span><i class="dot" style="background:var(--bad)"></i>Расходы <b>${short(r.costs)}</b> (${costPct.toFixed(0)}%)</span><span><i class="dot" style="background:var(--good)"></i>Прибыль <b>${short(r.profit)}</b> (${(100 - costPct).toFixed(0)}%)</span></div></div>
     <div class="card"><h3>Баланс проекта по годам</h3>${chart(r)}</div>
     <div class="advice">${icon("bulb")}<div>${advise(cargo, p.dKm)}</div></div>
     ${r.warnings.map(w => `<div class="warn">⚠ ${w}</div>`).join("")}`;
@@ -160,4 +216,5 @@ $("calibrate").onclick = () => {
   const cur = unitPrice(curCargo(), params().dKm, veh, S);
   S.cal *= obs / cur; saveSettings(); $("s_cal").value = S.cal.toFixed(4); run();
 };
+applyTheme(theme);
 run();
