@@ -2,107 +2,147 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Калькулятор Transport Fever 2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f6f54">
+<title>TF2 Логистика</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><h1>🚂 Transport Fever 2 — калькулятор логистики</h1>
-<p>Сколько транспорта нужно, прибыль и окупаемость, какой вид пускать и где. Числа приблизительные — откалибруйте во вкладке «Настройки».</p></header>
-<nav>
-  <button class="active" data-tab="t-calc">Калькулятор</button>
-  <button data-tab="t-compare">Сравнение видов</button>
-  <button data-tab="t-guide">Как работает игра</button>
-  <button data-tab="t-tips">Лайфхаки</button>
-  <button data-tab="t-settings">Настройки</button>
-</nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-road" viewBox="0 0 24 24"><path d="M3 15V9l2-4h14l2 4v6M3 15h18M3 15v3h3v-3M18 15v3h3v-3M7 11h.01M17 11h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tram" viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 10h14M9 21l1.5-4M15 21l-1.5-4M9 3l1-2h4l1 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-rail" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v11a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V4a1 1 0 0 1 1-1zM5 11h14M8 21l2-3M16 21l-2-3M9 15h.01M15 15h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-water" viewBox="0 0 24 24"><path d="M3 15l2 4h14l2-4-9-3zM12 12V3l5 4-5 2M3 22c2 0 2-1 4.5-1s2.5 1 4.5 1 2.500-1 4.500-1 2.500 1 4.500 1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-air" viewBox="0 0 24 24"><path d="M10.500 13.500L3 12l1-2 8 .5L16 4l2 .5-2 7 5 .5a1.500 1.500 0 0 1 0 3l-5 .5 2 7-2 .5-4-6.500-8 .5-1-2z" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round"/></symbol>
+  <symbol id="i-cmp" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19a2 2 0 0 0 2 2h13M8 7h7" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.500 10.900c.6.5 1 1.200 1 2.100h5c0-.9.4-1.600 1-2.100A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cog" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12l2-1-1-3-2 .5-1.500-1.500.5-2-3-1-1 2h-2l-1-2-3 1 .5 2L6 8.500 4 8 3 11l2 1v0l-2 1 1 3 2-.5L7.500 17l-.5 2 3 1 1-2h2l1 2 3-1-.5-2 1.500-1.500 2 .5 1-3z" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand"><span class="logo"><svg><use href="#i-rail"/></svg></span>
+    <div><h1>TF2 Логистика</h1><p>Расчёт маршрутов Transport Fever 2</p></div></div>
+  <nav class="tabs" id="tabs">
+    <button class="on" data-tab="t-calc"><svg><use href="#i-calc"/></svg><span>Расчёт</span></button>
+    <button data-tab="t-compare"><svg><use href="#i-cmp"/></svg><span>Сравнение</span></button>
+    <button data-tab="t-guide"><svg><use href="#i-book"/></svg><span>Как работает</span></button>
+    <button data-tab="t-tips"><svg><use href="#i-bulb"/></svg><span>Лайфхаки</span></button>
+    <button data-tab="t-settings"><svg><use href="#i-cog"/></svg><span>Настройки</span></button>
+  </nav>
+</header>
+
 <main>
 <section class="tab" id="t-calc">
-  <div class="form">
-    <label>Груз / пассажиры<select id="cargo"></select></label>
-    <label>Транспорт<select id="vehicle"></select></label>
-    <label>Расстояние по прямой, км<input id="dist" type="number" min="0.1" step="0.5" value="15"></label>
-    <label>Длина пути, км (пусто = ×1.2)<input id="path" type="number" min="0" step="0.5" placeholder="авто"></label>
-    <label>Объём, ед. в месяц<input id="vol" type="number" min="1" step="10" value="400"></label>
-    <label>Инфраструктура, $ (пусто = оценка)<input id="infra" type="number" min="0" step="1000" placeholder="авто"></label>
-    <label class="chk"><input id="twoway" type="checkbox"> Груз возят в обе стороны</label>
+  <div class="layout">
+    <aside class="panel inputs">
+      <h2>Маршрут</h2>
+      <label class="fld">Груз
+        <select id="cargo"></select></label>
+      <div class="fld">Вид транспорта
+        <div class="seg" id="modeSeg"></div></div>
+      <label class="fld">Модель
+        <select id="vehicle"></select></label>
+      <div class="fld">
+        <div class="rowtop"><span>Расстояние по прямой</span><output id="distOut"></output></div>
+        <input id="distR" type="range" min="1" max="150" step="1" value="15">
+        <div class="numrow"><input id="dist" type="number" inputmode="decimal" min="0.1" step="0.5" value="15"><i>км</i></div>
+      </div>
+      <div class="fld">
+        <div class="rowtop"><span>Объём</span><output id="volOut"></output></div>
+        <input id="volR" type="range" min="10" max="3000" step="10" value="400">
+        <div class="numrow"><input id="vol" type="number" inputmode="numeric" min="1" step="10" value="400"><i>ед./мес</i></div>
+      </div>
+      <details class="adv">
+        <summary>Дополнительно</summary>
+        <label class="fld">Длина пути, км <small>пусто = прямая × 1.2</small>
+          <input id="path" type="number" inputmode="decimal" min="0" step="0.5" placeholder="авто"></label>
+        <label class="fld">Инфраструктура, $ <small>пусто = оценка</small>
+          <input id="infra" type="number" inputmode="numeric" min="0" step="1000" placeholder="авто"></label>
+        <label class="chk"><input id="twoway" type="checkbox"><span>Груз везут в обе стороны</span></label>
+      </details>
+    </aside>
+    <div class="results" id="result"></div>
   </div>
-  <div id="result"></div>
 </section>
 
 <section class="tab" id="t-compare" hidden>
-  <p id="compareNote"></p>
-  <div class="tablewrap"><table>
-    <thead><tr><th>Вид</th><th>Модель</th><th>ТС</th><th>Прибыль/год</th><th>Вложения</th><th>Окуп., лет</th></tr></thead>
-    <tbody id="compareBody"></tbody></table></div>
-  <p class="muted">Параметры берутся из вкладки «Калькулятор».</p>
+  <div class="head"><h2>Какой транспорт выгоднее</h2><p id="compareNote"></p></div>
+  <div id="compareList" class="cmp"></div>
+  <p class="hint">Параметры берутся из вкладки «Расчёт». Серые варианты — вне оптимальной дистанции.</p>
 </section>
 
 <section class="tab" id="t-guide" hidden>
-<h2>Как устроена логика игры</h2>
-<h3>Что влияет на цену доставленного груза</h3>
-<ul>
-<li><b>Расстояние по прямой</b> между станцией, где груз сел в транспорт, и станцией, где вышел. Извилистый путь не добавляет денег, но увеличивает расходы и время.</li>
-<li><b>Тип груза</b>: у каждого свой базовый тариф. Переработанные (сталь, товары, топливо, инструменты) дороже сырья.</li>
-<li><b>Номинальная скорость транспорта</b> (а не фактическая) влияет на ставку: быстрый транспорт получает больше за ту же единицу.</li>
-<li><b>Уровень сложности</b> — глобальный множитель.</li>
-<li>Формула, которую разработчики подтверждали (по данным сообщества): <code>(300 + дистанция_м) × базовая_цена × коэф_груза × 125 / миллисекунд_в_дне × сложность</code>. Точные константы расходятся, поэтому калькулятор калибруется по вашей игре.</li>
-<li><b>Пересадки оплачиваются по каждому плечу</b> отдельно (по прямой на каждом): плечи можно дробить, платя по всем.</li>
-</ul>
-<h3>Цепочки производства</h3>
-<ul>
-<li>Первичные: угольная/рудная шахта, нефтескважина, карьер, лесоповал, ферма.</li>
-<li>Вторичные: сталелитейный (руда+уголь → сталь), нефтеперегонка (нефть → топливо), лесопилка (брёвна → доски), пищевое (зерно → еда), фабрика товаров/инструментов (сталь, доски, топливо → товары/инструменты).</li>
-<li>Города: потребляют товары/еду/топливо для развития и дают пассажиров и почту.</li>
-<li>Чем стабильнее и больше вы вывозите продукцию, тем выше производство предприятия (в игре отображается в окне промышленности).</li>
-</ul>
-<h3>Где строить и что к чему подводить</h3>
-<ul>
-<li>Стройте <b>первичное → вторичное</b> рядом (5–25 км): короткое плечо, быстрая окупаемость; затем готовую продукцию везите в город дальше (где ставка выше).</li>
-<li>Одна станция у нескольких заводов уменьшает инфраструктуру, но ограничивает пропускную способность.</li>
-<li>Станцию ставьте так, чтобы зона охвата (круг) захватывала сам завод/много жилых домов; пассажиры — в плотных центрах.</li>
-<li>Выбирайте вид по дистанции: авто — короткие; поезд — 20–80 км и большие потоки; корабль — дальше и у воды; самолёт — очень далёкие города.</li>
-</ul>
-<h3>Сколько нужно транспорта</h3>
-<p>ТС = объём в год / (вместимость × рейсов в год × загрузка). Рейс = путь туда-обратно / эффективную скорость + время погрузки/разгрузки. Это и считает калькулятор.</p>
-<h3>Деньги</h3>
-<ul>
-<li>Расходы: обслуживание транспорта (порядка 1/6 цены в год) плюс стоимость инфраструктуры и её содержание.</li>
-<li>Окупаемость = (стоимость ТС + инфраструктура) / годовая прибыль.</li>
-</ul>
-<p class="muted">Игровые константы не опубликованы полностью. Сведения основаны на обсуждениях сообщества — проверяйте на практике.</p>
+  <div class="head"><h2>Как работает игра</h2><p>Коротко о том, откуда берутся деньги и как строить логистику.</p></div>
+  <div class="acc">
+    <details open><summary>Что влияет на цену груза</summary><div class="body">
+      <ul>
+        <li><b>Расстояние по прямой</b> между станцией погрузки и выгрузки. Извилистая трасса денег не добавляет — только расходы и время.</li>
+        <li><b>Тип груза</b> — у каждого свой тариф. Переработанные (сталь, товары, топливо) дороже сырья.</li>
+        <li><b>Номинальная скорость</b> транспорта (не фактическая) повышает ставку.</li>
+        <li><b>Сложность</b> — глобальный множитель.</li>
+        <li><b>Пересадки</b> оплачиваются по каждому плечу отдельно.</li>
+      </ul>
+      <p class="formula">(300 + дистанция, м) × базовая цена × коэф. груза × 125 / мс в дне × сложность</p>
+      <p class="muted">Формула из обсуждений сообщества, константы расходятся — поэтому калькулятор калибруется.</p>
+    </div></details>
+    <details><summary>Цепочки производства</summary><div class="body">
+      <ul>
+        <li><b>Первичные:</b> угольная и рудная шахты, нефтескважина, карьер, лесоповал, ферма.</li>
+        <li><b>Вторичные:</b> сталелитейный (руда + уголь → сталь), НПЗ (нефть → топливо), лесопилка (брёвна → доски), пищевое (зерно → еда), фабрики товаров и инструментов.</li>
+        <li><b>Города</b> потребляют товары, еду, топливо и дают пассажиров и почту.</li>
+        <li>Чем стабильнее вывозите продукцию, тем выше производство предприятия.</li>
+      </ul>
+    </div></details>
+    <details><summary>Где строить и что к чему подводить</summary><div class="body">
+      <ul>
+        <li>Стройте <b>первичное → вторичное</b> рядом (5–25 км) — быстрая окупаемость, потом готовую продукцию везите в город дальше, где ставка выше.</li>
+        <li>Зона охвата станции должна захватывать завод целиком, а пассажирские — плотные кварталы.</li>
+        <li>Общая станция на несколько заводов экономит инфраструктуру, но ограничивает пропускную способность.</li>
+      </ul>
+    </div></details>
+    <details><summary>Какой транспорт куда</summary><div class="body">
+      <ul>
+        <li><b>Авто</b> — до ~20 км, малые потоки, старт игры.</li>
+        <li><b>Трамвай</b> — плотные городские линии.</li>
+        <li><b>Поезд</b> — 20–80 км, большие потоки, дешёвая тонна-километр.</li>
+        <li><b>Корабль</b> — дальние грузы у воды, минимум инфраструктуры.</li>
+        <li><b>Самолёт</b> — 40+ км, пассажиры и дорогие грузы.</li>
+      </ul>
+    </div></details>
+    <details><summary>Сколько нужно транспорта и окупаемость</summary><div class="body">
+      <p>ТС = объём за год ÷ (вместимость × рейсов в год × загрузка).</p>
+      <p>Рейс = путь туда-обратно ÷ эффективная скорость + время погрузки и разгрузки.</p>
+      <p>Окупаемость = (стоимость ТС + инфраструктура) ÷ годовая прибыль. Обслуживание ТС — порядка 1/6 цены в год.</p>
+    </div></details>
+  </div>
 </section>
 
 <section class="tab" id="t-tips" hidden>
-<h2>Лайфхаки</h2>
-<ul class="tips">
-<li><b>Старт:</b> короткие грузовые линии между шахтой и перерабатывающим заводом на грузовиках. Корабли — часто самый лёгкий ранний профит при большом объёме.</li>
-<li><b>Не делайте линию длиннее нужного:</b> оплата по прямой, расходы по пути. Спрямляйте трассу.</li>
-<li><b>Подбирайте скорость под линию:</b> дорогой скоростной состав на коротком пути не разгоняется, а содержится дороже.</li>
-<li><b>Заполняйте транспорт:</b> добавляйте ТС, пока на станции копится груз; убирайте, если ездят пустыми.</li>
-<li><b>Двухпутка + сигналы</b> на загруженных линиях; держите блоки короче; избегайте T-образных ветвлений на потоке.</li>
-<li><b>Грузовики на большом потоке</b> забивают дороги и станции — переходите на рельсы.</li>
-<li><b>Пассажирам нужны двусторонние линии</b> между крупными кварталами; почта — отдельной грузовой линией.</li>
-<li><b>Пересадочные узлы:</b> дальнюю линию разбивайте, оплата идёт по каждому плечу.</li>
-<li><b>Цепочка целиком:</b> доставляйте и сырьё, и готовую продукцию — вторую половину цепочки платят выше.</li>
-<li><b>Обновляйте парк по эрам</b>: новые модели быстрее и вместительнее, но проверьте окупаемость.</li>
-<li><b>Займы:</b> берите под быстрые окупаемые линии (до ~3 лет), не под сомнительные.</li>
-<li>Сохраняйтесь перед крупными стройками; используйте паузу при строительстве.</li>
-</ul>
+  <div class="head"><h2>Лайфхаки</h2><p>Что реально ускоряет рост компании.</p></div>
+  <div class="tipgrid" id="tipGrid"></div>
 </section>
 
 <section class="tab" id="t-settings" hidden>
-<h2>Настройки и калибровка</h2>
-<div class="form" id="settingsForm"></div>
-<div class="calib">
-  <p><b>Быстрая калибровка:</b> в игре посмотрите, сколько платят за 1 ед. выбранного груза на выбранной дистанции с выбранной моделью (параметры из вкладки «Калькулятор»), и введите значение.</p>
-  <input id="obsPrice" type="number" step="any" placeholder="$ за 1 ед. в игре">
-  <button id="calibrate">Откалибровать</button>
-  <button id="resetSettings">Сбросить настройки</button>
-</div>
+  <div class="head"><h2>Настройки и калибровка</h2><p>Константы игры приблизительные. Подгоните их под свою партию.</p></div>
+  <div class="panel">
+    <div class="calib">
+      <h3>Быстрая калибровка</h3>
+      <p>Посмотрите в игре, сколько платят за 1 единицу выбранного груза выбранной моделью на выбранной дистанции (вкладка «Расчёт»).</p>
+      <div class="calrow"><input id="obsPrice" type="number" inputmode="decimal" step="any" placeholder="$ за 1 ед. в игре">
+        <button class="btn" id="calibrate">Откалибровать</button></div>
+    </div>
+    <h3>Параметры</h3>
+    <div class="setgrid" id="settingsForm"></div>
+    <button class="btn ghost" id="resetSettings">Сбросить настройки</button>
+  </div>
 </section>
 </main>
-<footer>Неофициальный фан-проект. Transport Fever 2 — собственность Urban Games / Good Shepherd.</footer>
+<footer>Неофициальный фан-проект. Transport Fever 2 — Urban Games / Good Shepherd.</footer>
 <script src="data.js"></script>
 <script src="calc.js"></script>
 <script src="app.js"></script>
