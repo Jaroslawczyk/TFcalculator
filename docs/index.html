@@ -19,6 +19,7 @@
   <symbol id="i-water" viewBox="0 0 24 24"><path d="M3 15l2 4h14l2-4-9-3zM12 12V3l5 4-5 2M3 22c2 0 2-1 4.5-1s2.5 1 4.5 1 2.500-1 4.500-1 2.500 1 4.500 1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-air" viewBox="0 0 24 24"><path d="M10.500 13.500L3 12l1-2 8 .5L16 4l2 .5-2 7 5 .5a1.500 1.500 0 0 1 0 3l-5 .5 2 7-2 .5-4-6.500-8 .5-1-2z" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linejoin="round"/></symbol>
   <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.300 0-1.100.9-2 2-2h2.400A4.600 4.600 0 0 0 21 9.800C21 6 17 3 12 3zM7.500 12.500h.01M9.500 8h.01M14.500 8h.01M17 11.500h.01" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linejoin="round"/></symbol>
   <symbol id="i-calc" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round"/></symbol>
   <symbol id="i-cmp" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19a2 2 0 0 0 2 2h13M8 7h7" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -34,6 +35,7 @@
   <nav class="tabs" id="tabs">
     <button class="on" data-tab="t-calc"><svg><use href="#i-calc"/></svg><span>Расчёт</span></button>
     <button data-tab="t-compare"><svg><use href="#i-cmp"/></svg><span>Сравнение</span></button>
+    <button data-tab="t-windows"><svg><use href="#i-eye"/></svg><span>Окна игры</span></button>
     <button data-tab="t-guide"><svg><use href="#i-book"/></svg><span>Как работает</span></button>
     <button data-tab="t-tips"><svg><use href="#i-bulb"/></svg><span>Лайфхаки</span></button>
     <button data-tab="t-settings"><svg><use href="#i-cog"/></svg><span>Настройки</span></button>
@@ -82,6 +84,23 @@
   <p class="hint">Параметры берутся из вкладки «Расчёт». Серые варианты — вне оптимальной дистанции.</p>
 </section>
 
+<section class="tab" id="t-windows" hidden>
+  <div class="head"><h2>Окна игры: что значит каждая цифра</h2><p>Разбор на реальных скриншотах: нефтяная цепочка и город. Номера на картинке совпадают с пояснениями.</p></div>
+  <div id="shots"></div>
+  <div class="card chaincalc">
+    <h3>Пример: сколько и чего возить по цепочке</h3>
+    <p class="muted">В Transport Fever 2 цепочка работает от спроса: город просит столько-то топлива, и столько же в итоге произведут и повезут по всей цепочке. Считаем с конца — от города к скважине.</p>
+    <div class="chain" id="chainFlow"></div>
+    <div class="chainin">
+      <label class="fld">Город просит топлива, ед./год<input id="chDemand" type="number" inputmode="numeric" min="1" value="21"></label>
+      <label class="fld">НПЗ 1: сырой нефти → нефти<span class="ratio"><input id="chA1" type="number" min="1" value="2"><b>:</b><input id="chA2" type="number" min="1" value="1"></span></label>
+      <label class="fld">НПЗ 2: нефти → топлива<span class="ratio"><input id="chB1" type="number" min="1" value="1"><b>:</b><input id="chB2" type="number" min="1" value="1"></span></label>
+      <label class="fld">Добыча скважины, ед./год<input id="chWell" type="number" inputmode="numeric" min="1" value="400"></label>
+    </div>
+    <div id="chainOut"></div>
+  </div>
+</section>
+
 <section class="tab" id="t-guide" hidden>
   <div class="head"><h2>Как работает игра</h2><p>Коротко о том, откуда берутся деньги и как строить логистику.</p></div>
   <div class="acc">
@@ -122,27 +141,7 @@
         <li><b>Проверка:</b> в окне линии смотрите загрузку и сколько ждут на остановках. Если толпа — добавьте транспорт, если едут пустыми — уберите или перенесите остановку.</li>
       </ul>
     </div></details>
-    <details><summary>Как читать окно предприятия</summary><div class="body">
-      <ul>
-        <li><b>Правило</b> — рецепт: слева что нужно привезти, справа что получится. Число иконок = число единиц. Например, «бочка + бочка ▶ капля» — из 2 ед. сырой нефти выйдет 1 ед. нефти. Только иконка без стрелки (у скважины, шахты) — первичное предприятие, ему ничего не нужно.</li>
-        <li><b>Уровень</b> — ступень мощности. С уровнем растёт максимум производства.</li>
-        <li><b>Производство X/Y</b> — сколько сделано за год / максимум на текущем уровне. Стрелки по бокам (если активны) понижают или повышают уровень предприятия.</li>
-        <li><b>Доставка X/Y</b> — сколько продукции ваш транспорт реально увёз и довёз до потребителя / сколько произведено.</li>
-        <li><b>Транспорт</b> — какие ваши линии обслуживают предприятие. «–» значит, что не подключено ни одной.</li>
-        <li><b>Запасы</b> — сколько сырья лежит на складе и сколько расходуется.</li>
-        <li><b>Поставщики / Потребители</b> — откуда можно везти сырьё и куда можно отдать продукцию.</li>
-        <li><b>Главное:</b> предприятие производит только то, что у него забирают и доводят до потребителя. Цепочка должна заканчиваться в городе, который этот товар просит. Поэтому без линий везде 0.</li>
-      </ul>
-    </div></details>
-    <details><summary>Как читать окно города</summary><div class="body">
-      <ul>
-        <li><b>Жители / Торговые / Рабочие места</b> — размер жилой, торговой и промышленной зон города.</li>
-        <li><b>Пункты назначения:</b> стрелки — сколько мест жители могут достичь вашим общественным транспортом, машина — на авто. Больше доступных мест = рост города (+%).</li>
-        <li><b>Обеспеченность</b> — сколько нужных городу товаров (еда, топливо, товары и т. д.) доставлено / сколько нужно. Каждый привезённый товар даёт бонус к росту.</li>
-        <li><b>Качество</b> — шум, выбросы и пробки. Чем хуже, тем медленнее рост.</li>
-        <li><b>Прогнозируемая численность</b> — к чему город стремится: база + все бонусы в %.</li>
-      </ul>
-    </div></details>
+    <details><summary>Как читать окна предприятий и городов</summary><div class="body"><p>Подробный разбор со скриншотами и примерами расчёта — во вкладке <b>«Окна игры»</b>.</p></div></details>
     <details><summary>Какой транспорт куда</summary><div class="body">
       <ul>
         <li><b>Авто</b> — до ~20 км, малые потоки, старт игры.</li>
@@ -185,5 +184,6 @@
 <script src="data.js"></script>
 <script src="calc.js"></script>
 <script src="app.js"></script>
+<script src="windows.js"></script>
 </body>
 </html>

@@ -15,6 +15,7 @@ const CARGO = [
   { id: "logs",   name: "Брёвна",             kind: "freight", base: 1.0 },
   { id: "grain",  name: "Зерно",              kind: "freight", base: 1.1 },
   { id: "crude",  name: "Сырая нефть",        kind: "freight", base: 1.2 },
+  { id: "oil",    name: "Нефть (после НПЗ)",  kind: "freight", base: 1.4 },
   { id: "steel",  name: "Сталь",              kind: "freight", base: 1.6 },
   { id: "planks", name: "Доски",              kind: "freight", base: 1.5 },
   { id: "fuel",   name: "Топливо",            kind: "freight", base: 1.7 },
