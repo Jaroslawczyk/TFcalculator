@@ -1,6 +1,16 @@
 // Вкладка «Окна игры»: размеченные скриншоты и обратный расчёт нефтяной цепочки.
 // Метки: [top в % от высоты картинки, заголовок, пояснение]
 const SHOTS = [
+  { img: "img/line.png", w: 391, h: 359, title: "Окно линии — сколько она везёт",
+    lead: "Главные цифры для расчёта транспорта: Норма и Частота.",
+    marks: [
+      [20, "Финансы / Диаграммы", "Доходы и расходы линии по годам — видно, окупается ли она."],
+      [29, "Баланс $0", "Прибыль линии за текущий год: выручка минус расходы на транспорт."],
+      [36.5, "Норма 10", "Сколько единиц линия может провезти за год. Сравнивайте с тем, сколько нужно заводу или городу."],
+      [44, "Частота 5 мин.", "Как часто транспорт приходит на остановку (реальные минуты при скорости ×1). Частота = рейс туда-обратно ÷ число ТС."],
+      [51.5, "Груз 0/4", "Сколько сейчас в машине / вместимость одной машины. Норма = 4 × 12,17 мин (игровой год) ÷ 5 мин ≈ 10."],
+      [70, "Дорожный транспорт: 1", "Сколько ТС на линии. Удвоите машины — частота станет вдвое меньше, норма вдвое больше."]
+    ] },
   { img: "img/oil-well.png", w: 406, h: 257, title: "Нефтяная скважина — первичное предприятие",
     lead: "Ничего не потребляет, только добывает. Это начало цепочки.",
     marks: [
@@ -56,9 +66,9 @@ document.querySelectorAll(".expl li, .pin").forEach(el => {
 });
 
 // обратный расчёт цепочки
-function goCalc(cargoId, perMonth) {
+function goCalc(cargoId, perYear) {
   $("cargo").value = cargoId; fillModes();
-  $("vol").value = Math.max(1, Math.ceil(perMonth)); $("vol").oninput();
+  $("vol").value = Math.max(1, Math.ceil(perYear)); $("vol").oninput();
   document.querySelector('[data-tab="t-calc"]').click();
 }
 function chain() {
@@ -78,7 +88,7 @@ function chain() {
   $("chainOut").innerHTML = `
     <div class="tablewrap"><table class="legs"><thead><tr><th>Плечо</th><th>Груз</th><th>В год</th><th>В месяц</th><th></th></tr></thead><tbody>
     ${legs.map(([l, n, id, y]) => `<tr><td>${l}</td><td>${n}</td><td><b>${+y.toFixed(1)}</b></td><td>${+(y / 12).toFixed(1)}</td>
-      <td><button class="btn sm" data-c="${id}" data-v="${y / 12}">Транспорт →</button></td></tr>`).join("")}
+      <td><button class="btn sm" data-c="${id}" data-v="${y}">Транспорт →</button></td></tr>`).join("")}
     </tbody></table></div>
     <div class="steps">
       <p><b>Как считали:</b></p>

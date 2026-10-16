@@ -57,13 +57,13 @@
         <select id="diff"></select></label>
       <div class="fld">
         <div class="rowtop"><span>Расстояние по прямой</span><output id="distOut"></output></div>
-        <input id="distR" type="range" min="1" max="150" step="1" value="15">
-        <div class="numrow"><input id="dist" type="number" inputmode="decimal" min="0.1" step="0.5" value="15"><i>км</i></div>
+        <input id="distR" type="range" min="0.5" max="100" step="0.5" value="3">
+        <div class="numrow"><input id="dist" type="number" inputmode="decimal" min="0.1" step="0.5" value="3"><i>км</i></div>
       </div>
       <div class="fld">
-        <div class="rowtop"><span>Объём</span><output id="volOut"></output></div>
-        <input id="volR" type="range" min="10" max="3000" step="10" value="400">
-        <div class="numrow"><input id="vol" type="number" inputmode="numeric" min="1" step="10" value="400"><i>ед./мес</i></div>
+        <div class="rowtop"><span>Нужно возить в год</span><output id="volOut"></output></div>
+        <input id="volR" type="range" min="5" max="1000" step="5" value="40">
+        <div class="numrow"><input id="vol" type="number" inputmode="numeric" min="1" step="5" value="40"><i>ед./год</i></div>
       </div>
       <details class="adv">
         <summary>Дополнительно</summary>
@@ -75,6 +75,31 @@
       </details>
     </aside>
     <div class="results" id="result"></div>
+  </div>
+  <div class="tools">
+    <div class="card tool">
+      <h3>Подбор по окну линии в игре</h3>
+      <p class="muted">Возьмите цифры из окна вашей линии (вкладка «Обзор»): Норма, Частота, сколько транспорта и вместимость («Груз 0/4» → 4).</p>
+      <div class="tgrid">
+        <label class="fld">Норма сейчас, ед./год<input id="lnRate" type="number" inputmode="numeric" min="0" value="10"></label>
+        <label class="fld">Транспорта на линии<input id="lnN" type="number" inputmode="numeric" min="1" value="1"></label>
+        <label class="fld">Частота сейчас, мин<input id="lnFreq" type="number" inputmode="decimal" min="0" step="0.5" value="5"></label>
+        <label class="fld">Вместимость 1 ТС<input id="lnCap" type="number" inputmode="numeric" min="1" value="4"></label>
+        <label class="fld">Нужно возить, ед./год<input id="lnNeed" type="number" inputmode="numeric" min="1" value="42"></label>
+      </div>
+      <div id="lnOut"></div>
+    </div>
+    <div class="card tool">
+      <h3>Рецепт завода: сколько везти и сколько выйдет</h3>
+      <p class="muted">Правило «🛢🛢 ▶ 💧» = 2 единицы входа дают 1 единицу выхода. Впишите свой рецепт.</p>
+      <div class="tgrid">
+        <label class="fld">Входа в рецепте<input id="rcIn" type="number" inputmode="numeric" min="1" value="2"></label>
+        <label class="fld">Выхода в рецепте<input id="rcOut" type="number" inputmode="numeric" min="1" value="1"></label>
+        <label class="fld">Есть сырья, ед./год<input id="rcHave" type="number" inputmode="numeric" min="0" value="200"></label>
+        <label class="fld">Нужно продукции, ед./год<input id="rcNeed" type="number" inputmode="numeric" min="0" value="21"></label>
+      </div>
+      <div id="rcOutBox"></div>
+    </div>
   </div>
 </section>
 
@@ -152,7 +177,8 @@
       </ul>
     </div></details>
     <details><summary>Сколько нужно транспорта и окупаемость</summary><div class="body">
-      <p>ТС = объём за год ÷ (вместимость × рейсов в год × загрузка).</p>
+      <p><b>Норма</b> линии — сколько единиц она провозит за год. <b>Частота</b> — время рейса туда-обратно ÷ число ТС, в реальных минутах при скорости ×1 (игровой год ≈ 12 минут). Норма = вместимость × 12,17 ÷ частота.</p>
+      <p>ТС нужно = нужно в год ÷ норма одного ТС. Пример: норма 10 при одной машине, заводу нужно 42 → 42 ÷ 10 ≈ 5 машин.</p>
       <p>Рейс = путь туда-обратно ÷ эффективная скорость + время погрузки и разгрузки.</p>
       <p>Окупаемость = (стоимость ТС + инфраструктура) ÷ годовая прибыль. Обслуживание ТС — порядка 1/6 цены в год.</p>
     </div></details>
@@ -185,5 +211,6 @@
 <script src="calc.js"></script>
 <script src="app.js"></script>
 <script src="windows.js"></script>
+<script src="tools.js"></script>
 </body>
 </html>

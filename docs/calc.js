@@ -1,7 +1,8 @@
-// Чистые функции расчёта (без DOM). Единицы: км, часы игрового времени, $.
+// Чистые функции расчёта (без DOM). Единицы: км, км/ч, реальные минуты при скорости ×1, $.
+// Как в игре: «Частота» = рейс туда-обратно / число ТС; «Норма» = вместимость × (год / частота).
 function unitPrice(cargo, dKm, veh, S) {
   const speedMult = Math.pow(veh.speed / S.refSpeed, S.speedExp);
-  return cargo.base * (300 + dKm * 1000) / 100 * speedMult * S.difficulty * S.cal;
+  return cargo.base * (300 + dKm * 1000) / 5 * speedMult * S.difficulty * S.cal;
 }
 
 function infraCost(mode, pathKm, infraOverride) {
@@ -15,11 +16,11 @@ function evaluate(veh, cargo, p, S) {
   const m = MODES[veh.mode];
   const pathKm = Math.max(p.pathKm, p.dKm);
   const vEff = veh.speed * m.eff;
-  const roundTripH = 2 * pathKm / vEff + 2 * m.loadH;
-  const tripsYear = 8760 * S.uptime / roundTripH;
+  const roundTripMin = 2 * pathKm / vEff * 60 + 2 * m.loadMin;
+  const tripsYear = S.yearMin * S.uptime / roundTripMin;
   const legs = (cargo.twoWay || p.twoWay) ? 2 : 1;
   const capYear = veh.cap * tripsYear * legs * S.loadFactor;
-  const annual = p.volMonth * 12;
+  const annual = p.volYear;
   const n = Math.max(1, Math.ceil(annual / capYear));
   const price = unitPrice(cargo, p.dKm, veh, S);
   const revenue = annual * price;
@@ -37,8 +38,8 @@ function evaluate(veh, cargo, p, S) {
   if (veh.mode === "rail" && p.dKm < 4) warnings.push("Для рельсов дистанция мала: инфраструктура не окупится, подойдёт авто.");
   if (veh.mode === "air" && p.dKm < 40) warnings.push("Самолёт эффективен на дальних дистанциях (40+ км).");
   if (p.dKm > 0 && pathKm / p.dKm > 1.6) warnings.push("Путь сильно длиннее прямой: оплата идёт по прямой, а расходы — по пути.");
-  return { veh, n, price, revenue, costs, profit, capex, infra, payback, roundTripH, tripsYear,
-           headwayH: roundTripH / n, capYear, annual, warnings };
+  return { veh, n, price, revenue, costs, profit, capex, infra, payback, roundTripMin, tripsYear,
+           freqMin: roundTripMin / n, rate: veh.cap * S.yearMin / (roundTripMin / n), capYear, annual, warnings };
 }
 
 function compareAll(cargo, p, S) {

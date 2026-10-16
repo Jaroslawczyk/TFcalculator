@@ -107,13 +107,13 @@ function bind(rng, num, out, suffix) {
   upd(+num.value);
 }
 bind($("distR"), $("dist"), $("distOut"), "км");
-bind($("volR"), $("vol"), $("volOut"), "ед./мес");
+bind($("volR"), $("vol"), $("volOut"), "ед./год");
 ["path", "infra", "twoway", "vehicle"].forEach(id => $(id).oninput = run);
 
 function params() {
   const dKm = Math.max(0.1, +$("dist").value || 0.1);
   const pk = +$("path").value, inf = $("infra").value.trim();
-  return { dKm, pathKm: pk > 0 ? pk : dKm * 1.2, volMonth: Math.max(1, +$("vol").value || 1),
+  return { dKm, pathKm: pk > 0 ? pk : dKm * 1.2, volYear: Math.max(1, +$("vol").value || 1),
            infra: inf === "" ? null : +inf, twoWay: $("twoway").checked };
 }
 
@@ -179,7 +179,7 @@ function run() {
       <div><div class="lbl">Окупаемость</div><div class="big">${isFinite(r.payback) ? r.payback.toFixed(1) + " <small style='font-size:.5em;font-weight:700'>лет</small>" : "—"}</div>
         <span class="pill ${cls}">${label}</span></div>
       <div><div class="lbl">Нужно транспорта</div><div class="big">${r.n}</div>
-        <div class="sub">интервал ~${r.headwayH.toFixed(1)} ч</div></div>
+        <div class="sub">частота ~${r.freqMin.toFixed(1)} мин · норма ~${fmt(r.rate)}/год</div></div>
     </div>
     <div class="grid">
       <div class="m"><span>Цена за 1 ед.</span><b>${money(r.price)}</b></div>
@@ -187,7 +187,7 @@ function run() {
       <div class="m"><span>Расходы / год</span><b>${money(r.costs)}</b></div>
       <div class="m ${r.profit > 0 ? "pos" : "neg"}"><span>Прибыль / год</span><b>${money(r.profit)}</b></div>
       <div class="m"><span>Вложения</span><b>${money(r.capex)}</b><small>ТС ${money(r.n * veh.price)} · инфра. ${money(r.infra)}</small></div>
-      <div class="m"><span>Рейс туда-обратно</span><b>${r.roundTripH.toFixed(1)} ч</b><small>${fmt(r.tripsYear)} рейсов/год на ТС</small></div>
+      <div class="m"><span>Рейс туда-обратно</span><b>${r.roundTripMin.toFixed(1)} мин</b><small>${r.tripsYear.toFixed(1)} рейсов/год на ТС · ${fmt(r.capYear)} ед./год на ТС</small></div>
     </div>
     <div class="card"><h3>Выручка и расходы</h3>
       <div class="split"><i class="a" style="width:${costPct}%"></i><i class="b" style="width:${100 - costPct}%"></i></div>
@@ -202,7 +202,7 @@ function renderCompare(cargo, p) {
   const rows = compareAll(cargo, p, S);
   const finite = rows.filter(r => isFinite(r.payback) && !r.off).map(r => r.payback);
   const maxP = Math.max(...finite, 1);
-  $("compareNote").textContent = `${cargo.name} · ${p.dKm} км по прямой · ${p.volMonth} ед./мес`;
+  $("compareNote").textContent = `${cargo.name} · ${p.dKm} км по прямой · ${p.volYear} ед./год`;
   $("compareList").innerHTML = rows.map((r, i) => {
     const w = isFinite(r.payback) ? Math.max(6, 100 - r.payback / (maxP * 1.15) * 100) : 4;
     return `<div class="row ${i === 0 && !r.off ? "best" : ""} ${r.off ? "off" : ""}">
